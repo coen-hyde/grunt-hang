@@ -27,7 +27,7 @@ Add this line to your project's grunt.js gruntfile:
 grunt.loadNpmTasks('grunt-hang');
 ```
 
-Then use the tasks `buildStart` and `buildEnd` when defining you build tasks eg.
+Then use the tasks `buildStart` and `buildEnd` when defining your build tasks eg.
 ```js
 grunt.registerTask("default", 'buildStart clean lint test buildEnd');
 ```

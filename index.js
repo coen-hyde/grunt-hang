@@ -13,7 +13,17 @@ module.exports = function(projectRoot) {
 
   vent.on('build:end', function() {
     building = false;
-  })
+  });
+
+  var middleware = function(req, res, next) {
+    if (!building) {
+      return next();
+    }
+
+    vent.once('build:end', next);
+  };
+
+  middleware.vent = vent;
 
   if (!fs.existsSync(buildFile)) {
     fs.writeFileSync(buildFile, '-');
@@ -30,11 +40,5 @@ module.exports = function(projectRoot) {
     }
   });
 
-  return function(req, res, next) {
-    if (!building) {
-      return next();
-    }
-
-    vent.once('build:end', next);
-  };
+  return middleware;
 };

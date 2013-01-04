@@ -24,7 +24,7 @@ app.use(hang('path/to/project/root/'));
 
 Add this line to your project's grunt.js gruntfile:
 ```js
-grunt.loadNpmTasks 'grunt-hang'
+grunt.loadNpmTasks('grunt-hang');
 ```
 
 Then use the tasks `buildStart` and `buildEnd` when defining you build tasks eg.

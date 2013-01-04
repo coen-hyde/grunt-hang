@@ -1,29 +1,11 @@
 var path = require('path')
   , fs = require('fs')
-  , EventEmitter = require('events').EventEmitter;
+  , EventEmitter = require('events').EventEmitter
+  , building = false
+  , vent = new EventEmitter();
 
-module.exports = function(projectRoot) {
+hanger = function(projectRoot) {
   var buildFile = path.resolve(projectRoot)+'/.grunthang'
-    , building = false
-    , vent = new EventEmitter();
-
-  vent.on('build:start', function() {
-    building = true;
-  });
-
-  vent.on('build:end', function() {
-    building = false;
-  });
-
-  var middleware = function(req, res, next) {
-    if (!building) {
-      return next();
-    }
-
-    vent.once('build:end', next);
-  };
-
-  middleware.vent = vent;
 
   if (!fs.existsSync(buildFile)) {
     fs.writeFileSync(buildFile, '-');
@@ -40,5 +22,23 @@ module.exports = function(projectRoot) {
     }
   });
 
-  return middleware;
+  return function(req, res, next) {
+    if (!building) {
+      return next();
+    }
+
+    vent.once('build:end', next);
+  };
 };
+
+vent.on('build:start', function() {
+  building = true;
+});
+
+vent.on('build:end', function() {
+  building = false;
+});
+
+hanger.vent = vent;
+
+module.exports = hanger;
